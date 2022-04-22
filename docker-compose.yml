@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     volumes:
       - /dev/net:/dev/net:z # tun device
-      - ${ROOT}/config/vpn:/vpn # OpenVPN configuration
+      - ${CONFIG_PATH}/config/vpn:/vpn # OpenVPN configuration
     security_opt:
       - label:disable
     ports:
@@ -25,7 +25,7 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - ${ROOT}/downloads:/downloads # downloads folder
-      - ${ROOT}/config/deluge:/config # config files
+      - ${CONFIG_PATH}/config/deluge:/config # config files
 
   jackett:
     container_name: jackett
@@ -39,7 +39,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
-      - ${ROOT}/config/jackett:/config # config files
+      - ${CONFIG_PATH}/config/jackett:/config # config files
 
   # nzbget:
   #   container_name: nzbget
@@ -65,9 +65,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/sonarr:/config # config files
-      - ${ROOT}/complete/tv:/tv # tv shows folder
-      - ${ROOT}/downloads:/downloads # download folder
+      - ${CONFIG_PATH}/config/sonarr:/config # config files
+      - ${ROOT}/tv:/tv # tv shows folder
+      - ${DOWNLOAD_PATH}/downloads:/downloads # download folder
 
   radarr:
     container_name: radarr
@@ -80,9 +80,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/radarr:/config # config files
-      - ${ROOT}/complete/movies:/movies # movies folder
-      - ${ROOT}/downloads:/downloads # download folder
+      - ${CONFIG_PATH}/config/radarr:/config # config files
+      - ${ROOT}/movies:/movies # movies folder
+      - ${DOWNLOAD_PATH}/downloads:/downloads # download folder
 
   plex-server:
     container_name: plex-server
@@ -92,9 +92,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     network_mode: host
     volumes:
-      - ${ROOT}/config/plex/db:/config # plex database
-      - ${ROOT}/config/plex/transcode:/transcode # temp transcoded files
-      - ${ROOT}/complete:/data # media library
+      - ${CONFIG_PATH}/config/plex/db:/config # plex database
+      - ${CONFIG_PATH}/config/plex/transcode:/transcode # temp transcoded files
+      - ${DOWNLOAD_PATH}:/data # media library
 
   # bazarr:
   #   container_name: bazarr
@@ -113,8 +113,8 @@ services:
   rdtclient:
     container_name: rdtclient
     volumes:
-      - '${ROOT}/downloads:/data/downloads'
-      - '${ROOT}/config/rdtclient:/data/db'
+      - '${DOWNLOAD_PATH}/downloads:/data/downloads'
+      - '${CONFIG_PATH}/config/rdtclient:/data/db'
     image: rogerfar/rdtclient
     restart: always
     logging:
