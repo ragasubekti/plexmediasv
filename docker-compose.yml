@@ -80,18 +80,47 @@ services:
     volumes:
       - ${CONFIG_PATH}/config/plex/db:/config # plex database
       - ${CONFIG_PATH}/config/plex/transcode:/transcode # temp transcoded files
-      - ${DOWNLOAD_PATH}:/data # media library
-
-  # rdtclient:
-  #   container_name: rdtclient
-  #   volumes:
-  #     - '${DOWNLOAD_PATH}/downloads:/data/downloads'
-  #     - '${CONFIG_PATH}/config/rdtclient:/data/db'
-  #   image: rogerfar/rdtclient
-  #   restart: always
-  #   logging:
-  #     driver: json-file
-  #     options:
-  #       max-size: 10m
-  #   network_mode: host
+      - ${ROOT}:/data # media library
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=debug
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PGID} # default group id, defined in .env
+      - TZ=${TZ} # timezone, defined in .env
+    # network_mode: host
+    ports:
+      - 5055:5055
+    volumes:
+      - ${CONFIG_PATH}/config/overseerr:/app/config
+      - ${ROOT}/movies:/movies # movies folder
+      - ${DOWNLOAD_PATH}/downloads:/downloads # download folder
+      - ${ROOT}/tv:/tv # tv shows folder
+      - ${ROOT}/music:/music # tv shows folder
+    restart: unless-stopped
+  nginx:
+    image: nginx:latest
+    container_name: webserver
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      -  ${CONFIG_PATH}/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      -  ${CONFIG_PATH}/config/nginx/ssl:/ssl/
+    environment:
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PGID} # default group id, defined in .env
+      # - /home/ubuntu/ssl:/ssl/
+  tautulli:
+    image: lscr.io/linuxserver/tautulli
+    container_name: tautulli
+    environment:
+      - PUID=${PUID} # default user id, defined in .env
+      - PGID=${PGID} # default group id, defined in .env
+      - TZ={TZ}
+    volumes:
+      -  ${CONFIG_PATH}/config/tau:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
     
