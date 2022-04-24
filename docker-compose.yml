@@ -73,6 +73,7 @@ services:
   plex-server:
     container_name: plex-server
     image: plexinc/pms-docker:latest
+    build: /home/noir/Projects/pms-docker
     restart: unless-stopped
     environment:
       - TZ=${TZ} # timezone, defined in .env
