@@ -72,8 +72,7 @@ services:
 
   plex-server:
     container_name: plex-server
-    image: plexinc/pms-docker:latest
-    build: /home/noir/Projects/pms-docker
+    image: mauimauer/spritsail-plex
     restart: unless-stopped
     environment:
       - TZ=${TZ} # timezone, defined in .env
@@ -82,6 +81,8 @@ services:
       - ${CONFIG_PATH}/config/plex/db:/config # plex database
       - ${CONFIG_PATH}/config/plex/transcode:/transcode # temp transcoded files
       - ${ROOT}:/data # media library
+    devices:
+      - /dev/dri:/dev/dri
   overseerr:
     image: sctx/overseerr:latest
     container_name: overseerr
